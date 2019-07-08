@@ -4,12 +4,13 @@ import java.sql.*;
 
 public class JavaDB {
 
-    private static final String url= "jdbc:mysql://localhost/mysql?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+    private static final String url = "jdbc:mysql://localhost/mysql";
     private static final String username = "root";
     private static final String password = "pass";
 
     public static void main(String[] args) {
 
+        //Регистрация драйвера
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
         }
@@ -17,11 +18,11 @@ public class JavaDB {
             System.out.println("Драйвер не найден");
         }
 
+        //Установление соединения
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             Statement statement = connection.createStatement();) {
+             Statement statement = connection.createStatement()) {
 
-
-            // Получить DatabaseMetaData объект и показать информацию о соединении
+            // Информация о соединении
             DatabaseMetaData dma = connection.getMetaData();
             System.out.println("Connected to: " + dma.getURL());
             System.out.println("Driver: " + dma.getDriverName());
@@ -29,14 +30,15 @@ public class JavaDB {
             System.out.println();
 
             statement.execute("INSERT INTO usersdb.users (firstname, age) VALUES (\"Mike\", 29)");
-            //Пробуем пакетное выполнение команд
+
+            //Пакетное выполнение команд
             statement.addBatch("INSERT INTO usersdb.users (firstname, age) VALUES (\"Michelle\", 25)");
             statement.addBatch("INSERT INTO usersdb.users (firstname, age) VALUES (\"Lucy\", 26)");
             statement.addBatch("INSERT INTO usersdb.users (firstname, age) VALUES (\"Naya\", 18)");
             statement.executeBatch();
             statement.clearBatch();
 
-            ResultSet resultSet= statement.executeQuery("SELECT * FROM usersdb.users");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM usersdb.users");
 
             while (resultSet.next()){
                 int id;
@@ -56,5 +58,4 @@ public class JavaDB {
             e.printStackTrace();
         }
     }
-
 }
